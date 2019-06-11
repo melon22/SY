@@ -1,0 +1,51 @@
+   public boolean onCreate() {
+        Log.i("test","onCreate");
+        db = new DbHelper(getContext(),"person.db",null,3);
+        sqLiteDatabase = db.getReadableDatabase();
+        uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+uriMatcher.addURI("com.example.contentprivoid.MyPerson","linkman",1);uriMatcher.addURI("com.example.contentprivoid.MyPerson","linkman/#",2);
+        return false;
+    }
+    @Nullable
+    @Override
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+        Log.i("test","query");
+        int type=uriMatcher.match(uri);
+        switch (type){
+            case 1://查询所有
+                Log.i("test","查询所有");
+                return  sqLiteDatabase.query(false,"person",projection,selection,selectionArgs,null,null,sortOrder,null);
+            case 2://查询单个
+                Log.i("test","查询单个");
+               Long id= ContentUris.parseId(uri);
+                return  sqLiteDatabase.query(false,"person",projection,"_id=?",new String[]{id+""},null,null,sortOrder,null);
+        }
+            return null;
+    }
+    @Nullable
+    @Override
+    public String getType(Uri uri) {
+        Log.i("test","getType");
+        return null;
+    }
+ 
+    @Nullable
+    @Override
+    public Uri insert(Uri uri, ContentValues values) {
+        Log.i("test","insert");
+        sqLiteDatabase.insert("person",null,values);
+        return null;
+    }
+ 
+    @Override
+    public int delete(Uri uri, String selection, String[] selectionArgs) {
+        Log.i("test","delete");
+        sqLiteDatabase.delete("person",selection,selectionArgs);
+        return 0;
+    }
+ 
+    @Override
+    public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+        Log.i("test","update");
+        return sqLiteDatabase.update("person",values,selection,selectionArgs);
+    }
